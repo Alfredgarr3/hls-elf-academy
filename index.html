@@ -1317,6 +1317,7 @@ const EL = {
 function genElfName(name, a1, a2, a3) {
   let seed = 0;
   for (let i = 0; i < name.length; i++) seed = (seed * 31 + name.charCodeAt(i)) % 1000;
+  seed = (seed + a1 * 137 + a2 * 251 + a3 * 373) % 1000;
   const p1 = EF[a1] || EF[0], p2 = EL[a2] || EL[0];
   return `${p1[seed % p1.length]} ${p2[(seed * 7 + 3) % p2.length]}`;
 }
