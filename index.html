@@ -1302,16 +1302,18 @@ function displayName() {
    (seeded from name — same child always gets same elf name)
 ═══════════════════════════════════════════ */
 const EF = {
-  0: ['Twinkle','Glitter','Sparkle','Shimmer'],
-  1: ['Starlight','Luminara','Glow','Flicker'],
-  2: ['Cinnamon','Sugarplum','Ginger','Peppermint'],
-  3: ['Melody','Jingles','Carol','Harmony']
+  0: ['Twinkle','Glitter','Sparkle','Shimmer','Dazzle'],
+  1: ['Starlight','Luminara','Glow','Flicker','Solstice'],
+  2: ['Cinnamon','Sugarplum','Ginger','Peppermint','Butterscotch'],
+  3: ['Melody','Jingles','Carol','Harmony','Chorus'],
+  4: ['Dasher','Prancer','Comet','Cupid','Vixen']
 };
 const EL = {
-  0: ['Snowberry','Pinecozy','Warmwrap','Hearthglow'],
-  1: ['Stardust','Glitterpine','Moonbeam','Goldspire'],
-  2: ['Tickletoe','Bellyjingle','Gigglegift','Frostprank'],
-  3: ['Whispersnow','Silentbell','Moonwhisper','Stillstar']
+  0: ['Snowberry','Pinecozy','Warmwrap','Hearthglow','Cozypatch'],
+  1: ['Stardust','Glitterpine','Moonbeam','Goldspire','Brighthollow'],
+  2: ['Tickletoe','Bellyjingle','Gigglegift','Frostprank','Wobblehat'],
+  3: ['Whispersnow','Silentbell','Moonwhisper','Stillstar','Frostquill'],
+  4: ['Paintbrush','Ribbonweave','Colorbell','Tinselcraft','Glitterweave']
 };
 
 function genElfName(name, a1, a2, a3) {
@@ -1326,16 +1328,19 @@ function genElfName(name, a1, a2, a3) {
    QUIZ / NAME ENTRY
 ═══════════════════════════════════════════ */
 const QUIZ = [
-  { step:'Step 1 of 4', hero:'First — what\u2019s your name?', type:'name' },
-  { step:'Step 2 of 4', hero:'What\u2019s your favorite part of Christmas?', type:'choice',
+  { step:'Step 1 of 5', hero:'First — what\u2019s your name?', type:'name' },
+  { step:'Step 2 of 5', hero:'What\u2019s your favorite part of Christmas?', type:'choice',
     opts:[{i:'&#127873;',l:'Opening presents!'},{i:'&#127775;',l:'All the twinkling lights'},
-          {i:'&#127850;',l:'Cookies &amp; treats'},{i:'&#127925;',l:'Singing Christmas songs'}]},
-  { step:'Step 3 of 4', hero:'Pick your style:', type:'choice',
+          {i:'&#127850;',l:'Cookies &amp; treats'},{i:'&#127925;',l:'Singing Christmas songs'},
+          {i:'&#129420;',l:'Reindeer sightings'}]},
+  { step:'Step 3 of 5', hero:'Pick your style:', type:'choice',
     opts:[{i:'&#129444;',l:'Cozy &amp; warm'},{i:'&#10024;',l:'Sparkly &amp; bright'},
-          {i:'&#129315;',l:'Funny &amp; silly'},{i:'&#127769;',l:'Quiet &amp; magical'}]},
-  { step:'Step 4 of 4', hero:'What\u2019s your superpower?', type:'choice',
-    opts:[{i:'&#128514;',l:'Making everyone laugh'},{i:'&#129303;',l:'Giving the best hugs'},
-          {i:'&#127774;',l:'Always finding the fun'},{i:'&#129312;',l:'Keeping secrets safe'}]},
+          {i:'&#129315;',l:'Funny &amp; silly'},{i:'&#127769;',l:'Quiet &amp; magical'},
+          {i:'&#127912;',l:'Creative &amp; colorful'}]},
+  { step:'Step 4 of 5', hero:'What\u2019s your superpower?', type:'choice',
+    opts:[{i:'&#128514;',l:'Making everyone laugh'},{i:'&#127775;',l:'Spreading holiday joy'},
+          {i:'&#127774;',l:'Always finding the fun'},{i:'&#127873;',l:'Shaking presents &amp; guessing what\u2019s inside'},
+          {i:'&#128250;',l:'Christmas movie marathon watcher (you know the channel)'}]},
 ];
 
 function renderQ() {
