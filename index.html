@@ -870,6 +870,12 @@ body {
     <p class="rev-santa">"The magic of Elf Academy has looked into your heart<br>and discovered your true elf name&hellip;"</p>
     <div class="rev-scroll">
       <div class="rev-el">Your Official Elf Name</div>
+      <div id="legacy-badge" style="display:none;margin-bottom:10px;">
+        <div style="display:inline-block;background:linear-gradient(135deg,#8B1A1A,#C8860A);border:1.5px solid var(--gold);border-radius:20px;padding:6px 18px;font-size:11px;font-family:var(--display);letter-spacing:2px;color:#fff;text-transform:uppercase;">
+          ✨ Legacy Elf Name ✨
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:6px;font-style:italic;">From the oldest records in Santa's archives</div>
+      </div>
       <div class="rev-en" id="ren">&mdash;</div>
       <div class="rev-rl" style="margin-top:16px;">Known to the world as</div>
       <div class="rev-rn" id="rrn" style="font-size:16px;color:rgba(255,255,255,.6);font-style:italic;">&mdash;</div>
@@ -1316,10 +1322,24 @@ const EL = {
   4: ['Paintbrush','Ribbonweave','Colorbell','Tinselcraft','Glitterweave']
 };
 
+const WF = ['Nardo','Wobble','Squish','Hortence','Penelope','Bertram','Rudy','Biscuit',
+  'Figgy','Doodle','Sprout','Bumble','Pippin','Thistle','Blinky','Crumpet',
+  'Winifred','Archie','Bramble','Muffin','Plonk','Holly-Jo','Jim-Bob'];
+const WL = ['Sugarpuff','Candydust','Brandysnap','Cinnamonsprinkle','Buttercrumb',
+  'Mincepie','Frostwhisker','Tinselpop','Plumpudding','Crumblecrisp','Snowdrift',
+  'Gingernap','Jinglecrisp','Peppercrust','Shortbread','Snowcrumble','Fizzlecrisp',
+  'Hollybop','Chestnuttop','Waxwhistle','Cranberry','Plaidshirt'];
+
 function genElfName(name, a1, a2, a3) {
   let seed = 0;
   for (let i = 0; i < name.length; i++) seed = (seed * 31 + name.charCodeAt(i)) % 1000;
   seed = (seed + a1 * 137 + a2 * 251 + a3 * 373) % 1000;
+  // 1 in 8 chance of Legacy Elf Name
+  if (seed % 8 === 0) {
+    const wFirst = WF[seed % WF.length];
+    const wLast  = WL[(seed * 13 + 7) % WL.length];
+    return `✨LEGACY✨|${wFirst} ${wLast}`;
+  }
   const p1 = EF[a1] || EF[0], p2 = EL[a2] || EL[0];
   return `${p1[seed % p1.length]} ${p2[(seed * 7 + 3) % p2.length]}`;
 }
@@ -1439,8 +1459,13 @@ function showElfLoading() {
   S.status = 'enrolled';
   save();
   setTimeout(() => {
-    document.getElementById('ren').textContent = S.elfName;
+    const isLegacy = S.elfName.startsWith('✨LEGACY✨|');
+    const displayElf = isLegacy ? S.elfName.replace('✨LEGACY✨|','') : S.elfName;
+    const renEl = document.getElementById('ren');
+    const badgeEl = document.getElementById('legacy-badge');
+    renEl.textContent = displayElf;
     document.getElementById('rrn').textContent = `"${displayName()}"`;
+    if (badgeEl) badgeEl.style.display = isLegacy ? 'block' : 'none';
     goTo('sr');
   }, 600);
 }
