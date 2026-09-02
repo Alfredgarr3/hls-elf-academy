@@ -1307,41 +1307,79 @@ function displayName() {
    ELF NAME ENGINE
    (seeded from name — same child always gets same elf name)
 ═══════════════════════════════════════════ */
-const EF = {
-  0: ['Twinkle','Glitter','Sparkle','Shimmer','Dazzle'],
-  1: ['Starlight','Luminara','Glow','Flicker','Solstice'],
-  2: ['Cinnamon','Sugarplum','Ginger','Peppermint','Butterscotch'],
-  3: ['Melody','Jingles','Carol','Harmony','Chorus'],
-  4: ['Dasher','Prancer','Comet','Cupid','Vixen']
-};
-const EL = {
-  0: ['Snowberry','Pinecozy','Warmwrap','Hearthglow','Cozypatch'],
-  1: ['Stardust','Glitterpine','Moonbeam','Goldspire','Brighthollow'],
-  2: ['Tickletoe','Bellyjingle','Gigglegift','Frostprank','Wobblehat'],
-  3: ['Whispersnow','Silentbell','Moonwhisper','Stillstar','Frostquill'],
-  4: ['Paintbrush','Ribbonweave','Colorbell','Tinselcraft','Glitterweave']
-};
+// ── Gender hint lists (loose — unmatched names use full pool) ──
+const BOY_NAMES = ['robert','james','marcus','william','thomas','henry','george',
+  'charles','david','michael','christopher','daniel','matthew','andrew','john',
+  'joseph','ryan','tyler','brandon','kevin','jason','justin','nathan','zachary',
+  'samuel','benjamin','nicholas','jonathan','alexander','christian','patrick',
+  'timothy','raymond','gregory','jeffrey','jacob','ethan','noah','liam','mason',
+  'logan','lucas','oliver','elijah','aiden','jackson','carter','sebastian','owen'];
+const GIRL_NAMES = ['emma','sophia','olivia','isabella','emily','charlotte','amelia',
+  'grace','lily','hannah','victoria','caroline','elizabeth','claire','sarah',
+  'madison','abigail','chloe','zoe','natalie','brooklyn','aria','scarlett','layla',
+  'riley','nora','addison','aubrey','ellie','stella','hazel','violet','aurora',
+  'savannah','audrey','brooklyn','bella','lucy','anna','samantha','katherine',
+  'jessica','ashley','megan','taylor','lauren','rachel','amanda','stephanie','kayla'];
 
-const WF = ['Nardo','Wobble','Squish','Hortence','Penelope','Bertram','Rudy','Biscuit',
-  'Figgy','Doodle','Sprout','Bumble','Pippin','Thistle','Blinky','Crumpet',
-  'Winifred','Archie','Bramble','Muffin','Plonk','Holly-Jo','Jim-Bob'];
-const WL = ['Sugarpuff','Candydust','Brandysnap','Cinnamonsprinkle','Buttercrumb',
-  'Mincepie','Frostwhisker','Tinselpop','Plumpudding','Crumblecrisp','Snowdrift',
-  'Gingernap','Jinglecrisp','Peppercrust','Shortbread','Snowcrumble','Fizzlecrisp',
-  'Hollybop','Chestnuttop','Waxwhistle','Cranberry','Plaidshirt'];
+// ── EF first names tagged by gender feel: M/F/N ──
+const EF_M = ['Flicker','Solstice','Ginger','Jingles','Chorus','Dasher','Prancer','Comet'];
+const EF_F = ['Twinkle','Glitter','Sparkle','Shimmer','Dazzle','Starlight','Luminara',
+  'Sugarplum','Peppermint','Melody','Carol','Harmony','Cupid','Vixen'];
+const EF_N = ['Glow','Cinnamon','Butterscotch','Chorus','Flicker','Comet'];
+
+// ── WF wildcard first names tagged ──
+const WF_M = ['Nardo','Bertram','Rudy','Biscuit','Sprout','Bumble','Archie','Plonk','Jim-Bob'];
+const WF_F = ['Hortence','Penelope','Winifred','Holly-Jo'];
+const WF_N = ['Wobble','Squish','Figgy','Doodle','Pippin','Thistle','Blinky','Crumpet','Bramble','Muffin'];
+
+// ── Full flat EL pool (last names — fully randomized, decoupled from quiz) ──
+const EL_POOL = [
+  'Snowberry','Pinecozy','Warmwrap','Hearthglow','Cozypatch',
+  'Stardust','Glitterpine','Moonbeam','Goldspire','Brighthollow',
+  'Tickletoe','Bellyjingle','Gigglegift','Frostprank','Wobblehat',
+  'Whispersnow','Silentbell','Moonwhisper','Stillstar','Frostquill',
+  'Hollybrush','Ribbonweave','Colorbell','Tinselcraft','Glitterweave',
+  'Candybrush','Sugarpuff','Candydust','Brandysnap','Cinnamonsprinkle',
+  'Buttercrumb','Mincepie','Frostwhisker','Tinselpop','Plumpudding',
+  'Crumblecrisp','Snowdrift','Gingernap','Jinglecrisp','Peppercrust',
+  'Shortbread','Snowcrumble','Fizzlecrisp','Hollybop','Chestnuttop',
+  'Waxwhistle','Cranberry','Plaidshirt'
+];
+
+function getGender(name) {
+  const n = name.toLowerCase().trim();
+  if (BOY_NAMES.includes(n))  return 'M';
+  if (GIRL_NAMES.includes(n)) return 'F';
+  return 'N';
+}
+
+function pickFirst(seed, isWild, gender) {
+  let pool;
+  if (isWild) {
+    if (gender === 'M') pool = [...WF_M, ...WF_N];
+    else if (gender === 'F') pool = [...WF_F, ...WF_N];
+    else pool = [...WF_M, ...WF_F, ...WF_N];
+  } else {
+    if (gender === 'M') pool = [...EF_M, ...EF_N];
+    else if (gender === 'F') pool = [...EF_F, ...EF_N];
+    else pool = [...EF_M, ...EF_F, ...EF_N];
+  }
+  return pool[seed % pool.length];
+}
 
 function genElfName(name, a1, a2, a3) {
   let seed = 0;
   for (let i = 0; i < name.length; i++) seed = (seed * 31 + name.charCodeAt(i)) % 1000;
   seed = (seed + a1 * 137 + a2 * 251 + a3 * 373) % 1000;
+  const gender  = getGender(name);
+  const lastName = EL_POOL[(seed * 11 + 5) % EL_POOL.length];
   // 1 in 8 chance of Legacy Elf Name
   if (seed % 8 === 0) {
-    const wFirst = WF[seed % WF.length];
-    const wLast  = WL[(seed * 13 + 7) % WL.length];
-    return `✨LEGACY✨|${wFirst} ${wLast}`;
+    const wFirst = pickFirst(seed, true, gender);
+    return `✨LEGACY✨|${wFirst} ${lastName}`;
   }
-  const p1 = EF[a1] || EF[0], p2 = EL[a2] || EL[0];
-  return `${p1[seed % p1.length]} ${p2[(seed * 7 + 3) % p2.length]}`;
+  const firstName = pickFirst(seed, false, gender);
+  return `${firstName} ${lastName}`;
 }
 
 /* ═══════════════════════════════════════════
